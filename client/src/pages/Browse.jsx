@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import AccountLoader from "../components/UI/AccountLoader";
 import IntroAnim from "../components/UI/ConflixIntroAnim/IntroAnim";
 import ManageProfilesIcons from "./ManageProfilesIcons";
+import HeroWP from "../components/HeroWP"; // 👈 AÑADIDO
+
 const LazyBrowseHome = lazy(() => import("./BrowseHome"));
 const LazyBrowseMovies = lazy(() => import("./BrowseMovies"));
 
@@ -23,8 +25,7 @@ const Browse = ({
   const { data, profile } = useSelector((state) => state.account);
   const { intro } = useSelector((state) => state.feature);
   const [accountLoaded, setAccountLoaded] = useState(false);
-  const [profileIcons, setProfileIcons] = useState({state:false});
-
+  const [profileIcons, setProfileIcons] = useState({ state: false });
   const [timeOutID, setTimeoutID] = useState();
 
   let heroMovie =
@@ -36,23 +37,22 @@ const Browse = ({
   let linkFocus = { Home: true, nav: "/browse" };
 
   useEffect(() => {
-    if (timeOutID) {
-      clearTimeout(timeOutID);
-    }
-
+    if (timeOutID) clearTimeout(timeOutID);
     if (accountLoaded) {
       let newTimeoutID = setTimeout(() => {
         setAccountLoader(false);
         setAccountLoaded(false);
       }, 2000);
-
       setTimeoutID(newTimeoutID);
     }
-    return () => clearTimeout(timeOutID); // cleanup function
+    return () => clearTimeout(timeOutID);
   }, [accountLoaded]);
 
   return (
     <div>
+      {/* 👇 HERO DESDE WORDPRESS */}
+      {!accountClick && loaded && <HeroWP />}
+
       {intro &&
         loaded &&
         ReactDOM.createPortal(
@@ -75,8 +75,8 @@ const Browse = ({
           document.getElementById("portal")
         )}
 
-        {profileIcons.state &&
-      loaded &&
+      {profileIcons.state &&
+        loaded &&
         ReactDOM.createPortal(
           <ManageProfilesIcons
             setProfileIcons={setProfileIcons}
@@ -88,23 +88,25 @@ const Browse = ({
       {addProfile &&
         loaded &&
         ReactDOM.createPortal(
-          <BrowseAdd setAddProfile={setAddProfile} setProfileIcons={setProfileIcons} profileIcons={profileIcons} />,
+          <BrowseAdd
+            setAddProfile={setAddProfile}
+            setProfileIcons={setProfileIcons}
+            profileIcons={profileIcons}
+          />,
           document.getElementById("portal")
         )}
 
       {accountLoader &&
         loaded &&
         ReactDOM.createPortal(
-          <AccountLoader
-            accountLoaded={accountLoaded}
-          />,
+          <AccountLoader accountLoaded={accountLoaded} />,
           document.getElementById("portal")
         )}
 
       {accountClick && loaded && (
         <Suspense
           fallback={
-            <div className="absolute top-0 left-0 w-[100%] h-[100vh] bg-black ">
+            <div className="absolute top-0 left-0 w-[100%] h-[100vh] bg-black">
               loading...
             </div>
           }
