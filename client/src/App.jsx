@@ -13,7 +13,6 @@ import Regform from "./components/Regform";
 import Browse from "./pages/Browse";
 import ManageProfiles from "./pages/ManageProfiles";
 import BrowseShared from "./pages/Shared/BrowseShared";
-import ProtectedRoute from "./pages/Shared/ProtectedRoute.jsx";
 
 import Logout from "./pages/Logout.jsx";
 import MovieDetail from "./pages/MovieDetail.jsx";
