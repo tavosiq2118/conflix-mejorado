@@ -71,13 +71,17 @@ function App() {
 
       <Route
         element={
-          <ProtectedRoute
-            setLoaded={setLoaded}
-            addProfile={addProfile}
-            editClick={editClick}
-          />
-        }
-      >
+         <Route
+  element={
+    <BrowseShared
+      navView={navView}
+      setNavView={setNavView}
+      setAccountLoader={setAccountLoader}
+      setAccountClick={setAccountClick}
+    />
+  }
+>
+
         <Route
           path="browse"
           element={
