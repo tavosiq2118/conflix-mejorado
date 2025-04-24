@@ -18,13 +18,37 @@ const userSchema = new mongoose.Schema({
     minlength: [6, "Minimum password length is 6 characters"]
   },
   subProfile: {
-    type: Array,
-    default: [
-      {
-        id: 0,
-        name: "Add Profile",
-        img: "/images/addProfile.svg",
-        isProfile: false
+  type: Array,
+  default: [
+    {
+      id: 1,
+      name: "Mary",
+      img: "/images/mary.jpg",
+      isProfile: true,
+      watchList: []
+    },
+    {
+      id: 2,
+      name: "Cindyy",
+      img: "/images/cindyy.jpg",
+      isProfile: true,
+      watchList: []
+    },
+    {
+      id: 3,
+      name: "kids",
+      img: "/images/kids.png",
+      isProfile: true,
+      watchList: []
+    },
+    {
+      id: 0,
+      name: "Add Profile",
+      img: "/images/addProfile.svg",
+      isProfile: false
+    }
+  ]
+}
       },
       {
         id: 1,
