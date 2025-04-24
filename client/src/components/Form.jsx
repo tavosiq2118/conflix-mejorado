@@ -10,11 +10,33 @@ const Form = ({ type, name, padding, style, desc }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí podés poner lógica real de login si querés luego
-    alert("Este login aún no está conectado.");
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch("https://encasastream-api.vercel.app/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) throw new Error("Usuario o contraseña incorrectos");
+
+    const user = await response.json();
+
+    const selectedProfile = user.subProfile.find(p => p.name.toLowerCase() === "mary") || user.subProfile[1];
+
+    localStorage.setItem("Profile", JSON.stringify(selectedProfile));
+    dispatch(setProfile(selectedProfile));
+    navigate("/browse");
+
+  } catch (error) {
+    alert("Error al iniciar sesión: " + error.message);
+  }
+};
+
 
   const handleGuestLogin = () => {
     const guestProfile = {
