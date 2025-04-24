@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setDeviceInfo } from "./utils/deviceInfoSlice.js";
@@ -36,13 +35,12 @@ function App() {
   const handleEvent = () => {
     dispatch(
       setDeviceInfo({
-        width:
-         window.innerWidth,
+        width: window.innerWidth,
         height: Math.max(
           window.innerHeight,
           document.body.offsetHeight,
           document.body.clientHeight
-        )
+        ),
       })
     );
   };
@@ -68,104 +66,92 @@ function App() {
 
       <Route path="logout" element={<Logout />} />
 
+      {/* 🔓 Acceso directo sin login */}
       <Route
+        path="browse"
         element={
-         <Route
-  element={
-    <BrowseShared
-      navView={navView}
-      setNavView={setNavView}
-      setAccountLoader={setAccountLoader}
-      setAccountClick={setAccountClick}
-    />
-  }
->
-
+          <BrowseShared
+            navView={navView}
+            setNavView={setNavView}
+            setAccountLoader={setAccountLoader}
+            setAccountClick={setAccountClick}
+          />
+        }
+      >
         <Route
-          path="browse"
+          index
           element={
-            <BrowseShared
-              navView={navView}
+            <Browse
+              accountClick={accountClick}
               setNavView={setNavView}
+              setAccountClick={setAccountClick}
+              accountLoader={accountLoader}
               setAccountLoader={setAccountLoader}
+              setEditClick={setEditClick}
+              loaded={loaded}
+              addProfile={addProfile}
+              setAddProfile={setAddProfile}
+            />
+          }
+        />
+        <Route
+          path=":id"
+          element={
+            <MovieDetail
+              setAccountClick={setAccountClick}
+              setNavView={setNavView}
+            />
+          }
+        />
+        <Route
+          path="genre/movies"
+          element={
+            <GenreMovies
+              setNavView={setNavView}
               setAccountClick={setAccountClick}
             />
           }
-        >
-          <Route
-            index
-            element={
-              <Browse
-                accountClick={accountClick}
-                setNavView={setNavView}
-                setAccountClick={setAccountClick}
-                accountLoader={accountLoader}
-                setAccountLoader={setAccountLoader}
-                setEditClick={setEditClick}
-                loaded={loaded}
-                addProfile={addProfile}
-                setAddProfile={setAddProfile}
-              />
-            }
-          />
-          <Route
-            path=":id"
-            element={
-              <MovieDetail
-                setAccountClick={setAccountClick}
-                setNavView={setNavView}
-              />
-            }
-          />
-          <Route
-            path="genre/movies"
-            element={
-              <GenreMovies
-                setNavView={setNavView}
-                setAccountClick={setAccountClick}
-              />
-            }
-          />
-          <Route
-            path="genre/tv_shows"
-            element={
-              <GenreTV
-                setNavView={setNavView}
-                setAccountClick={setAccountClick}
-              />
-            }
-          />
-          <Route
-            path="search"
-            element={
-              <Search
-                setNavView={setNavView}
-                setAccountClick={setAccountClick}
-              />
-            }
-          />
-          <Route
-            path="mylist"
-            element={
-              <Mylist
-                setNavView={setNavView}
-                setAccountClick={setAccountClick}
-              />
-            }
-          />
-        </Route>
+        />
         <Route
-          path="ManageProfiles"
+          path="genre/tv_shows"
           element={
-            <ManageProfiles
-              editClick={editClick}
-              setEditClick={setEditClick}
+            <GenreTV
+              setNavView={setNavView}
               setAccountClick={setAccountClick}
-              loaded={loaded}
+            />
+          }
+        />
+        <Route
+          path="search"
+          element={
+            <Search
+              setNavView={setNavView}
+              setAccountClick={setAccountClick}
+            />
+          }
+        />
+        <Route
+          path="mylist"
+          element={
+            <Mylist
+              setNavView={setNavView}
+              setAccountClick={setAccountClick}
             />
           }
         />
       </Route>
+
+      <Route
+        path="ManageProfiles"
+        element={
+          <ManageProfiles
+            editClick={editClick}
+            setEditClick={setEditClick}
+            setAccountClick={setAccountClick}
+            loaded={loaded}
+          />
+        }
+      />
 
       <Route path="*" element={<Error />} />
     </Routes>
@@ -173,3 +159,4 @@ function App() {
 }
 
 export default App;
+
