@@ -1,225 +1,79 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/prop-types */
-import { useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import { setProfile } from "../utils/profileSlice"; // ajustá la ruta si es distinta
+import { useState } from "react";
 
-import {
-  setEmailValidator,
-  setPasswordValidator
-} from "../utils/validatorSlice";
-import Button from "./UI/Button";
-import Input from "./UI/Input";
-import Validator from "./UI/Validator";
-
-const Form = ({
-  type,
-  name,
-  desc,
-  style,
-  check,
-  padding,
-  buttonName,
-  buttonType,
-  buttonSize,
-  context
-}) => {
-  const [email, setEmail] = useState(context || "");
-  const [pass, setPass] = useState("");
-
-  const emailRef = useRef();
-  const passRef = useRef();
-
-  let navigate = useNavigate();
-
-  const { emailError, passwordError } = useSelector((state) => state.validator);
+const Form = ({ type, name, padding, style, desc }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const onEmailChangeHandler = () => {
-    dispatch(setEmailValidator(false));
-    setEmail(emailRef.current.value);
-  };
-
-  const onPassChangeHandler = () => {
-    dispatch(setPasswordValidator(false));
-    setPass(passRef.current.value);
-  };
-
-  //login ////////////////////////////////////////////////
-  const login = async () => {
-    try {
-      const data = { email: email, password: pass };
-      const config = {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-          withCredentials: true
-        }
-      };
-
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/login`,
-        data,
-        config
-      );
-      if (res) {
-        navigate("/browse");
-      }
-    } catch (err) {
-      const error = err.response.data.message;
-
-      if (error.includes("password")) {
-        dispatch(setPasswordValidator(error));
-      } else {
-        dispatch(setEmailValidator(error));
-      }
-    }
-  };
-
-  //sign up //////////////////////////////////////////////////
-  const signup = async () => {
-    try {
-      const data = { email: email, password: pass };
-      const config = {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-          withCredentials: true
-        }
-      };
-
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/signup`,
-        data,
-        config
-      );
-      if (res) {
-        navigate("/browse");
-      }
-    } catch (err) {
-      const error = err.response.data.message;
-
-      if (error.includes("characters")) {
-        dispatch(setPasswordValidator(error));
-      } else {
-        dispatch(setEmailValidator(error));
-      }
-    }
-  };
-
-  const submitHandler = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    switch (type) {
-      case "login":
-        login();
-        break;
-      case "signup":
-        signup();
-        break;
-      default:
-        break;
-    }
+    // Aquí podés poner lógica real de login si querés luego
+    alert("Este login aún no está conectado.");
   };
+
+  const handleGuestLogin = () => {
+    const guestProfile = {
+      id: "guest123",
+      name: "Invitado",
+      img: "/images/avatar1.png",
+      isProfile: true,
+    };
+
+    localStorage.setItem("Profile", JSON.stringify(guestProfile));
+    dispatch(setProfile(guestProfile));
+    navigate("/browse");
+  };
+
   return (
-    <div
-      className={`relative flex lg:text-[14px] xl:text-[18px] flex-col justify-center item-center ${
-        type === "login" ? "md:bg-[rgb(0,0,0,0.7)]" : ""
-      } w-[95%] md:w-[50%] lg:w-[30%] m-[auto] ${padding}`}
+    <form
+      onSubmit={handleSubmit}
+      className={`relative max-w-[400px] mx-auto z-10 ${padding}`}
     >
-      <p className={`${style.name || "text-white"} font-bold tracking-normal`}>
-        {name}
-      </p>
-      {desc.detail && <p className={`${desc.style}`}>{desc.detail}</p>}
-      <form className="" onSubmit={submitHandler}>
-        <Input
-          ref={emailRef}
-          onChange={onEmailChangeHandler}
+      <h1 className={style.name}>{name}</h1>
+
+      <div className="flex flex-col gap-4 mt-4">
+        <input
+          type="email"
+          placeholder="Email"
+          className={style.input}
           value={email}
-          type="text"
-          button={false}
-          placeholder={"Email address"}
-          style={style.input}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        {emailError && <Validator value={emailError} />}
-        <Input
-          ref={passRef}
-          onChange={onPassChangeHandler}
-          value={pass}
+
+        <input
           type="password"
-          button={false}
-          placeholder={"Password"}
-          style={style.input}
+          placeholder="Password"
+          className={style.input}
           id={style.inputId}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        {passwordError && <Validator value={passwordError} />}
-        {type === "signup" && (
-          <div className={`${check.style} flex`}>
-            <input type="checkbox" className="scale-150" />
-            <span className="pl-4 align-center ">{check.name}</span>
-          </div>
-        )}
-        <Button
-          name={buttonName || "Sign In"}
-          button={buttonType || "button"}
-          bgColor="bg-red-600"
-          color="text-white"
-          padding="p-2"
-          width={buttonSize || "w-[100%] text-[1em]"}
-          align="self-center justify-center mt-3"
-          span={{ have: false }}
-        />
-        {type === "login" && (
-          //type login
-          <>
-            <p className="flex justify-center mt-3">OR</p>
 
-            <Button
-              name="Sign-In as a Guest"
-              button="button"
-              bgColor="bg-[rgb(45,45,45)]"
-              color="text-white"
-              size="text-[1em]"
-              padding="p-2"
-              width="w-[100%]"
-              align="self-center justify-center mt-3"
-              span={{ have: false }}
-              onClick={() => {
-                setEmail("guest@conflix.com");
-                setPass("123456");
-              }}
-            />
+        <button
+          type="submit"
+          className="bg-red-600 w-full text-white font-semibold p-2 rounded-md hover:bg-red-700"
+        >
+          {name}
+        </button>
 
-            <p className="flex justify-center p-4">Forgot password?</p>
+        <div className="text-center text-gray-300 my-2">OR</div>
 
-            <div className="flex ">
-              <input type="checkbox" className="scale-150" />
-              <span className="pl-4 align-center">Remember me</span>
-            </div>
+        <button
+          type="button"
+          onClick={handleGuestLogin}
+          className="bg-gray-800 text-white w-full p-2 rounded-md hover:bg-gray-700"
+        >
+          Sign-In as a Guest
+        </button>
+      </div>
 
-            <p className="pt-4">
-              New to Conflix?{" "}
-              <Link to="/">
-                <b>Sign up now</b>
-              </Link>
-              .
-            </p>
-            <p className="pt-4 text-sm lg:text-[11px]">
-              <span className="text-slate-400">
-                This is a portfolio project, do not enter sensitive data.
-              </span>{" "}
-              <a
-                href="https://www.github.com/CharlesXstorm/netflixClone"
-                target="_blank"
-                className="text-blue-600 "
-              >
-                Learn more
-              </a>
-            </p>
-          </>
-          //type login
-        )}
-      </form>
-    </div>
+      {desc?.detail && <p className="text-gray-400 text-sm mt-4">{desc.detail}</p>}
+    </form>
   );
 };
 
